@@ -1,8 +1,39 @@
+import datetime
+
 from django.contrib.auth import get_user_model
 from django.db import models
 
 
 User = get_user_model()
+
+
+class PostQuerySet(models.QuerySet):
+    """Объединение таблиц и выполнение фильтраций."""
+
+    def with_related_data(self):
+        """Объединение таблиц."""
+        return self.select_related('category', 'author', 'location')
+
+    def published(self):
+        """Фильтрация по статусу публикации."""
+        return self.filter(is_published=True, category__is_published=True)
+
+    def new_date(self):
+        """Фильтрация по времени публикации."""
+        return self.filter(pub_date__lte=datetime.datetime.now())
+
+
+class PublishedPostModel(models.Manager):
+    """Менеджер публикаций."""
+
+    def get_queryset(self):
+        """Фильтрация публикаций."""
+        return (
+            PostQuerySet(self.model)
+            .with_related_data()
+            .published()
+            .new_date()
+        )
 
 
 class BaseModel(models.Model):
@@ -75,6 +106,8 @@ class Post(BaseModel):
     category = models.ForeignKey(Category, verbose_name='Категория',
                                  on_delete=models.SET_NULL,
                                  null=True)
+    objects = PostQuerySet.as_manager()
+    published = PublishedPostModel()
 
     class Meta:
         """Специальный класс Meta."""

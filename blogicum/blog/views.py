@@ -1,5 +1,3 @@
-import datetime
-
 from django.shortcuts import get_object_or_404, render
 
 from blog.models import Category, Post
@@ -10,14 +8,7 @@ POSTS_PER_PAGE = 5
 
 def index(request):
     """Главная страница проекта."""
-    post_list = Post.objects.select_related('category',
-                                            'author',
-                                            'location').filter(
-                                                is_published=True,
-                                                category__is_published=True,
-                                                pub_date__lte=datetime.
-                                                datetime.now(
-                                                ))
+    post_list = Post.published.all()
     post_list = post_list[:POSTS_PER_PAGE]
     context = {'post_list': post_list}
     return render(request, 'blog/index.html', context)
@@ -25,15 +16,7 @@ def index(request):
 
 def post_detail(request, post_id):
     """Страница отдельного блога."""
-    post_list = Post.objects.select_related('category',
-                                            'author',
-                                            'location').filter(
-                                                is_published=True,
-                                                category__is_published=True,
-                                                pub_date__lte=datetime.
-                                                datetime.now(
-                                                ))
-    post = get_object_or_404(post_list, pk=post_id)
+    post = get_object_or_404(Post.published, pk=post_id)
     context = {'post': post}
     return render(request, 'blog/detail.html', context)
 
@@ -44,14 +27,7 @@ def category_posts(request, category_slug):
                                                          'description'),
                                  slug=category_slug,
                                  is_published=True)
-    post_list = Post.objects.select_related('category',
-                                            'author',
-                                            'location').filter(
-                                                is_published=True,
-                                                category__is_published=True,
-                                                pub_date__lte=datetime.
-                                                datetime.now(),
-                                                category__slug=category_slug)
+    post_list = Post.published.filter(category__slug=category_slug)
     context = {'post_list': post_list,
                'category': category}
     return render(request, 'blog/category.html', context)
