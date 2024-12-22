@@ -1,7 +1,6 @@
-import datetime
-
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils import timezone
 
 
 User = get_user_model()
@@ -20,7 +19,7 @@ class PostQuerySet(models.QuerySet):
 
     def new_date(self):
         """Фильтрация по времени публикации."""
-        return self.filter(pub_date__lte=datetime.datetime.now())
+        return self.filter(pub_date__lte=timezone.now())
 
 
 class PublishedPostModel(models.Manager):

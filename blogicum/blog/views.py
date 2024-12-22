@@ -8,9 +8,8 @@ POSTS_PER_PAGE = 5
 
 def index(request):
     """Главная страница проекта."""
-    post_list = Post.published.all()
-    post_list = post_list[:POSTS_PER_PAGE]
-    context = {'post_list': post_list}
+    posts = Post.published.all()[:POSTS_PER_PAGE]
+    context = {'posts': posts}
     return render(request, 'blog/index.html', context)
 
 
@@ -27,7 +26,7 @@ def category_posts(request, category_slug):
                                                          'description'),
                                  slug=category_slug,
                                  is_published=True)
-    post_list = Post.published.filter(category__slug=category_slug)
-    context = {'post_list': post_list,
+    posts = Post.published.filter(category__slug=category_slug)
+    context = {'posts': posts,
                'category': category}
     return render(request, 'blog/category.html', context)
