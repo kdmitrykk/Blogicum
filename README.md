@@ -8,7 +8,7 @@
 
 1. Клонируйте репозиторий:
     ```bash
-    git clone https://github.com/kdmitrykk/Blogicum
+    git clone https://github.com/kdmitrykk/Blogicum.git
     ```
 
 2. Перейдите в директорию проекта:
